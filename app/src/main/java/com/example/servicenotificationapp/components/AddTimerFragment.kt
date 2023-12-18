@@ -74,7 +74,7 @@ fun TimerFragment(onSubmit: () -> Unit) {
                                 hourState.value,
                                 minuteState.value,
                                 secondState.value
-                            ), false, true
+                            ), true
                         )
                     )
                     numbersInserted = 0

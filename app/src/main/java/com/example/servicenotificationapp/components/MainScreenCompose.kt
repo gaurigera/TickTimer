@@ -28,14 +28,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 import com.example.servicenotificationapp.R
 import com.example.servicenotificationapp.data.TimerRowState
 import com.example.servicenotificationapp.home.TimerViewModel
-import com.example.servicenotificationapp.timerServices.NotificationService
 import com.example.servicenotificationapp.timerServices.TimerActionModule
 import com.example.servicenotificationapp.timerUtil.Actions
-import com.example.servicenotificationapp.timerUtil.secondsToTimerState
 import com.example.servicenotificationapp.timerUtil.timeToSeconds
 import com.example.servicenotificationapp.timerUtil.timerStateToFormat
 
@@ -69,7 +66,7 @@ fun TimerRow(
         mutableStateOf(timerRowState.timerState)
     }
     val context = LocalContext.current
-    val liveData: LiveData<Int> = NotificationService.timerLiveData()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -77,14 +74,12 @@ fun TimerRow(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Text(
             timerStateToFormat(timerState),
             modifier = Modifier.background(Color.Transparent),
             color = Color.Black,
             fontSize = 44.sp
         )
-
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -93,25 +88,14 @@ fun TimerRow(
         ) {
             Button(onClick = {
                 isPaused = !isPaused
-
                 if (!isPaused) {
                     TimerActionModule.triggerService(
                         context,
                         Actions.RESUME.toString(),
                         timeToSeconds(
-                            timerRowState.timerState.hours,
-                            timerRowState.timerState.minutes,
-                            timerRowState.timerState.seconds
+                            timerState
                         )
                     )
-
-                    liveData.observeForever {
-                        timerState = secondsToTimerState(it)
-                        viewModel.updateTimerList(
-                            index,
-                            TimerRowState(timerState, false, false)
-                        )
-                    }
                 } else {
                     TimerActionModule.triggerService(context, Actions.PAUSE.toString())
                 }

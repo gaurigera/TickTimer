@@ -16,8 +16,8 @@ fun formatTime(hourStr: String, minuteStr: String, secondStr: String): TimerStat
     return TimerState(formattedHour, formattedMinute, formattedSecond)
 }
 
-fun timeToSeconds(hours: Int, minutes: Int, seconds: Int): Int {
-    return hours * 3600 + minutes * 60 + seconds
+fun timeToSeconds(timerState: TimerState): Int {
+    return timerState.hours * 3600 + timerState.minutes * 60 + timerState.seconds
 }
 
 fun timerStateToFormat(timerState: TimerState): String {
@@ -38,9 +38,7 @@ fun secondsToTimerState(totalSeconds: Int): TimerState {
 fun decrementing(timerState: TimerState): TimerState {
     return secondsToTimerState(
         timeToSeconds(
-            timerState.hours,
-            timerState.minutes,
-            timerState.seconds
+            timerState
         )
                 - 1
     )
