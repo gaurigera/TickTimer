@@ -33,7 +33,6 @@ import com.example.servicenotificationapp.data.TimerRowState
 import com.example.servicenotificationapp.home.TimerViewModel
 import com.example.servicenotificationapp.timerServices.TimerActionModule
 import com.example.servicenotificationapp.timerUtil.Actions
-import com.example.servicenotificationapp.timerUtil.timeToSeconds
 import com.example.servicenotificationapp.timerUtil.timerStateToFormat
 
 @Composable
@@ -44,6 +43,7 @@ fun MainScreen(
 
     LazyColumn {
         items(timer.size) { index ->
+            println(index)
             TimerRow(
                 timerRowState = timer[index],
                 index = index,
@@ -62,9 +62,7 @@ fun TimerRow(
     var isPaused by remember(timerRowState.isPaused) {
         mutableStateOf(timerRowState.isPaused)
     }
-    var timerState by remember {
-        mutableStateOf(timerRowState.timerState)
-    }
+    var timerState = timerRowState.timerState
     val context = LocalContext.current
 
     Column(
@@ -92,12 +90,10 @@ fun TimerRow(
                     TimerActionModule.triggerService(
                         context,
                         Actions.RESUME.toString(),
-                        timeToSeconds(
-                            timerState
-                        )
+                        index
                     )
                 } else {
-                    TimerActionModule.triggerService(context, Actions.PAUSE.toString())
+                    TimerActionModule.triggerService(context, Actions.PAUSE.toString(), index)
                 }
 
             }) {
@@ -111,8 +107,8 @@ fun TimerRow(
             Spacer(modifier = Modifier.padding(4.dp))
 
             Button(onClick = {
-                viewModel.deleteTimer(index)
-                TimerActionModule.triggerService(context, Actions.STOP.toString())
+//                viewModel.deleteTimer(index)
+                TimerActionModule.triggerService(context, Actions.STOP.toString(), index)
             }) {
                 Icon(Icons.Filled.Delete, "Delete timer")
             }
